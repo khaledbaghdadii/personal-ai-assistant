@@ -11,21 +11,21 @@ The application follows a **Full-Stack Monorepo** pattern:
 
 ```mermaid
 graph TD
-    User[User] --> Frontend[Apps/Web (Angular 18)]
-    Frontend --> API[Apps/API (Express)]
-    API --> Agent[AI Agent (LangChain)]
-    API --> VectorStore[Vector Store Service]
+    User[User] --> Frontend["Apps/Web (Angular 18)"]
+    Frontend --> API["Apps/API (Express)"]
+    API --> Agent["AI Agent (LangChain)"]
+    API --> VectorStore["Vector Store Service"]
     
     subgraph Backend
         API
         Agent
         VectorStore
-        NotesRepo[Notes Repository]
+        NotesRepo["Notes Repository"]
     end
 
     subgraph Data
-        NotesRepo --> FileSystem[JSON Storage]
-        VectorStore --> Memory[MemoryVectorStore]
+        NotesRepo --> FileSystem["JSON Storage"]
+        VectorStore --> Memory["MemoryVectorStore"]
     end
 ```
 
