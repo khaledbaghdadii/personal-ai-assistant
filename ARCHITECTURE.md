@@ -1,8 +1,11 @@
-# Technical Architecture & Design Decisions
+# AI Planner Architecture
 
-This document outlines the architecture, component breakdown, and key design decisions for the AI Planner application.
+This document provides a high-level overview of the system. For detailed developer guides, please refer to the specific component documentation:
 
-## 🏗 High-Level Architecture
+- 📘 **[Backend Architecture](apps/api/ARCHITECTURE.md)** (Express, LangChain, Data)
+- 📙 **[Frontend Architecture](apps/web/ARCHITECTURE.md)** (Angular, Signals, Material)
+
+## 🏗 High-Level Diagram
 
 The application follows a **Full-Stack Monorepo** pattern:
 
@@ -26,40 +29,15 @@ graph TD
     end
 ```
 
-## 🧩 Component Breakdown
+## 🧩 Core Decisions
 
-### 1. **Frontend (`apps/web`)**
-- **Framework**: Angular 18 (Standalone Components).
-- **State Management**: Angular Signals (Native).
-- **UI Library**: Angular Material & TailwindCSS.
-- **Responsibility**: Handles user interaction, chat history display, and notes management UI.
+1.  **Monorepo**: Keeps frontend and backend in sync.
+2.  **Stateless Agent**: Agent is invoked per request; session state is managed via `thread_id` and in-memory checkpointer (for now).
+3.  **In-Memory Vector Search**: Optimized for speed and simplicity for personal use cases (<5000 notes).
+4.  **Angular Signals**: Used exclusively for UI state management to ensure performance and reactivity.
 
-### 2. **Backend (`apps/api`)**
-- **Framework**: Express.js.
-- **Responsibility**: Exposes REST endpoints (`/api/chat`, `/api/notes`, `/api/search`).
-- **Agent Layer**: Wraps LangChain logic. Stateless handlers invoke the agent per request (or manage session persistence).
-- **Security**: Validates input for secrets before saving.
-
-### 3. **Data Layer (`data/`)**
-- **Persistence**: `apps/api/data/notes.json` (Single source of truth).
-- **Vector Index**: In-memory `MemoryVectorStore` rebuilt on startup from the JSON file.
-
-## 💡 Key Design Decisions
-
-### **Monorepo Structure**
-- **Choice**: `apps/api` + `apps/web`.
-- **Reasoning**: Clear separation of concerns while keeping the codebase unified. Allows sharing types easily in the future (though currently duplicated or separate).
-
-### **Angular Signals**
-- **Choice**: Used for all UI state (Messages, Session ID, Notes List).
-- **Reasoning**: Provides fine-grained reactivity and reduces change detection overhead compared to Zone.js heavy approaches.
-
-### **In-Memory Vector Search**
-- **Choice**: Keep `MemoryVectorStore`.
-- **Reasoning**: Dataset size remains small for personal use. Fast startup time (<100ms for <1000 notes) makes database complexity unnecessary.
-
-## 🚀 Future Improvements
+## 🚀 Future Roadmap
 
 1.  **Shared Library**: Extract types to `libs/shared-types`.
-2.  **Database**: Migrate JSON to SQLite or Postgres for robust data safety.
-3.  **Deployment**: Dockerize the stack (Dockerfile for API, Nginx for Web).
+2.  **Database**: Migrate JSON to SQLite/Postgres.
+3.  **Deployment**: Dockerize the stack.
