@@ -1,6 +1,9 @@
-# Antigravity Instructions
+---
+description: Project standards and architecture guidelines for AI Planner
+include: "**/*"
+---
 
-You are acting as a senior software engineer maintaining this project. Follow these rules religiously.
+# Project Standards
 
 ## 🏗 Project Structure
 
@@ -24,12 +27,10 @@ This is a Monorepo with two main applications:
 *   **Imports**: Use specific imports.
 *   **Async/Await**: Always use `async/await` instead of raw promises.
 *   **Error Handling**: Wrap controller logic in `try/catch` blocks and return JSON errors.
-*   **Types**: Use explicit types for Request/Response if possible (or Zod for validation).
 
 ### Frontend (Angular)
 *   **Standalone**: All components must be `standalone: true`.
 *   **Dependency Injection**: Use `private myService = inject(MyService)` instead of constructor injection.
-*   **Control Flow**: Use `@if`, `@for` syntax (modern Angular control flow).
 *   **Signals**: Use `signal()`, `computed()`, and `effect()` instead of `BehaviorSubject`.
 
 ## 📝 Documentation Rules
@@ -39,8 +40,6 @@ This is a Monorepo with two main applications:
 > When you make changes to the project structure, tech stack, or key design patterns, you MUST update `ARCHITECTURE.md` in the root directory.
 
 *   **README.md**: Keep the "How to Run" section updated if commands change.
-*   **Commits**: Use semantic commit messages (feat, fix, refactor, docs).
 
 ## 🛡️ Security & Quality
 *   **Secrets**: Never remove the security check that prevents saving passwords/keys in notes.
-*   **Formatting**: Maintain consistent formatting (Prettier standard).
