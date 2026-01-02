@@ -1,33 +1,20 @@
-# AI Planner - Personal Ops Assistant
+# AI Planner - Full Stack Personal Ops Assistant
 
-A production-ready CLI Personal Assistant powered by LangChain, OpenAI, and Local Vector Search.
+A production-ready Web Application powered by LangChain, OpenAI, Express, and Angular.
+
+## 🏗 Architecture
+
+This project is a monorepo containing:
+
+- **`apps/api`**: Express Backend with LangChain RAG agent.
+- **`apps/web`**: Angular 18 Frontend with Material UI.
 
 ## Features
 
-- **🧠 Conversation Memory**: Remembers context within the same session.
-- **📚 Long-term Memory (RAG)**: Semantic search over your personal notes.
-- **⚡ Interactive CLI**: Robust REPL with specialized slash commands.
-- **🔒 Privacy-Focused**: Validates input to prevent storing secrets.
-- **📂 Local Storage**: JSON-based storage for easy backup and portability.
-
-## Project Structure
-
-This project follows a modular architecture:
-
-```
-src/
-├── agent/          # AI Agent configuration
-│   └── tools/      # LangChain tools definitions
-├── cli/            # CLI Logic
-│   ├── commands.ts # Command handlers
-│   └── repl.ts     # Main event loop
-├── config/         # Centralized configuration
-├── lib/            # Data Access Layer
-│   ├── notes/      # File system operations
-│   └── vector/     # Vector store operations
-├── types/          # Shared type definitions
-└── index.ts        # Entry point
-```
+- **💬 Conversational Interface**: Modern chat UI with history.
+- **🧠 RAG Memory**: Semantic search over personal notes.
+- **📝 Note Management**: Create, list, and search notes via Sidebar.
+- **🔒 Privacy**: Secrets validation mechanism.
 
 ## Getting Started
 
@@ -37,69 +24,46 @@ src/
 
 ### Installation
 
-1. Clone the repo
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create `.env` file:
+1. Create a `.env` file in `apps/api/` with:
    ```env
    OPENAI_API_KEY=sk-...
    ```
 
-### Usage Scenarios
+2. Install dependencies for Backend:
+   ```bash
+   cd apps/api
+   npm install --legacy-peer-deps
+   ```
 
-#### 1. Conversational Memory
-The assistant remembers context within the session.
-```text
-> My name is Khaled
-AI: Nice to meet you, Khaled!
+3. Install dependencies for Frontend:
+   ```bash
+   cd apps/web
+   npm install
+   ```
 
-> What is my name?
-AI: Your name is Khaled.
+### Running the App
+
+You need two terminals:
+
+**Terminal 1: Backend**
+```bash
+cd apps/api
+npm run dev
+# Running on http://localhost:3000
 ```
 
-#### 2. Saving Notes (Long-term Memory)
-You can save notes directly or asking the AI to remember something.
-```text
-> /save Running Goal | I want to run 10k in under 50 mins
-✓ Saved note: "Running Goal"
-
-> /save Gift Ideas | Buy a coffee maker for Sarah
-✓ Saved note: "Gift Ideas"
+**Terminal 2: Frontend**
+```bash
+cd apps/web
+npm start
+# Running on http://localhost:4200
 ```
 
-#### 3. Semantic Search (RAG)
-Ask questions about your notes, even without exact keywords.
-```text
-> What are my fitness targets?
-AI: You have a goal to run 10k in under 50 minutes. (Source: Running Goal)
+## Tech Stack
 
-> /search coffee
-Searching for: "coffee"...
-1. [ID: ... | Gift Ideas | ...] Buy a coffee maker for Sarah
-```
-
-#### 4. Managing Sessions
-Switch context for different projects or topics.
-```text
-> /newsession project-alpha
-✓ Switched to session: project-alpha
-
-> /notes
-(Lists notes regardless of session)
-```
-
-### Commands
-
-| Command | Description |
-| :--- | :--- |
-| `/help` | Show available commands |
-| `/save <Title> | <Content>` | Save a note (Splits on first `|`) |
-| `/notes` | List recent notes |
-| `/search <query>` | Semantic search for notes |
-| `/newsession <name>` | Switch session context |
-| `/exit` | Exit application |
+- **Backend**: Express, LangChain, MemoryVectorStore (In-Memory), OpenAI Embeddings.
+- **Frontend**: Angular 18 (Standalone), Signals, Angular Material, Tailwind layout.
+- **Data**: JSON persistence (`apps/api/data/notes.json`).
 
 ## License
 

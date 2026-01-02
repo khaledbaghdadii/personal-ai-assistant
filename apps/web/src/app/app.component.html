@@ -1,0 +1,73 @@
+<mat-sidenav-container class="h-screen">
+  <mat-sidenav mode="side" opened class="w-80 bg-gray-50 border-r">
+    <mat-toolbar color="accent">
+      <span>My Notes</span>
+      <span class="spacer"></span>
+      <button mat-icon-button (click)="refreshNotes()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <div class="p-4 bg-white border-b">
+        <h3>Add Note</h3>
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Title</mat-label>
+            <input matInput [(ngModel)]="noteTitleInput">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Content</mat-label>
+            <textarea matInput [(ngModel)]="noteContentInput"></textarea>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="saveNote()" class="w-full">Save Note</button>
+    </div>
+
+    <mat-nav-list>
+      <div mat-subheader>Recent Notes</div>
+      <a mat-list-item *ngFor="let note of notes()">
+        <span matListItemTitle>{{note.title}}</span>
+        <span matListItemLine class="text-xs text-gray-500">{{note.createdAt | date:'short'}}</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="flex flex-col h-full bg-gray-100">
+    <mat-toolbar color="primary" class="shadow-md z-10">
+      <button mat-icon-button>
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>AI Planner</span>
+      <span class="spacer"></span>
+      <span class="text-sm mr-4 opacity-80">Session: {{sessionId()}}</span>
+      <button mat-button (click)="onNewSession()">New Session</button>
+    </mat-toolbar>
+
+    <!-- Chat Area -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-4">
+      <div *ngIf="messages().length === 0" class="text-center text-gray-400 mt-20">
+        <mat-icon class="scale-150 mb-2">chat_bubble_outline</mat-icon>
+        <p>Start a conversation...</p>
+      </div>
+
+      <div *ngFor="let msg of messages()" 
+           [class]="'flex ' + (msg.role === 'user' ? 'justify-end' : 'justify-start')">
+        <div [class]="'max-w-[70%] p-3 rounded-lg shadow-sm ' + 
+                      (msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white text-gray-800 rounded-bl-none')">
+          <p class="whitespace-pre-wrap leading-relaxed">{{msg.content}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="p-4 bg-white border-t">
+      <div class="flex gap-2 max-w-4xl mx-auto">
+        <mat-form-field appearance="outline" class="flex-1 subscript-wrapper-none">
+            <mat-label>Message Agent...</mat-label>
+            <input matInput [(ngModel)]="chatInput" (keyup.enter)="sendMessage()">
+        </mat-form-field>
+        <button mat-fab color="primary" (click)="sendMessage()" [disabled]="!chatInput.trim()">
+            <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
