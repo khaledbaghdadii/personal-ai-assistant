@@ -47,11 +47,47 @@ src/
    OPENAI_API_KEY=sk-...
    ```
 
-### Usage
+### Usage Scenarios
 
-Start the assistant:
-```bash
-npm run dev
+#### 1. Conversational Memory
+The assistant remembers context within the session.
+```text
+> My name is Khaled
+AI: Nice to meet you, Khaled!
+
+> What is my name?
+AI: Your name is Khaled.
+```
+
+#### 2. Saving Notes (Long-term Memory)
+You can save notes directly or asking the AI to remember something.
+```text
+> /save Running Goal | I want to run 10k in under 50 mins
+✓ Saved note: "Running Goal"
+
+> /save Gift Ideas | Buy a coffee maker for Sarah
+✓ Saved note: "Gift Ideas"
+```
+
+#### 3. Semantic Search (RAG)
+Ask questions about your notes, even without exact keywords.
+```text
+> What are my fitness targets?
+AI: You have a goal to run 10k in under 50 minutes. (Source: Running Goal)
+
+> /search coffee
+Searching for: "coffee"...
+1. [ID: ... | Gift Ideas | ...] Buy a coffee maker for Sarah
+```
+
+#### 4. Managing Sessions
+Switch context for different projects or topics.
+```text
+> /newsession project-alpha
+✓ Switched to session: project-alpha
+
+> /notes
+(Lists notes regardless of session)
 ```
 
 ### Commands
