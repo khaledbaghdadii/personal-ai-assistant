@@ -4,76 +4,62 @@ This document outlines the architecture, component breakdown, and key design dec
 
 ## 🏗 High-Level Architecture
 
-The application follows a **Modular Monolith** pattern, separating concerns into distinct layers:
+The application follows a **Full-Stack Monorepo** pattern:
 
 ```mermaid
 graph TD
-    User[User / CLI] --> REPL[src/cli/repl.ts]
-    REPL --> Router[Command Router]
-    REPL --> Agent[AI Agent (LangChain)]
+    User[User] --> Frontend[Apps/Web (Angular 18)]
+    Frontend --> API[Apps/API (Express)]
+    API --> Agent[AI Agent (LangChain)]
+    API --> VectorStore[Vector Store Service]
     
-    subgraph Core Logic
-        Router --> Cmds[src/cli/commands.ts]
-        Agent --> Tools[src/agent/tools]
+    subgraph Backend
+        API
+        Agent
+        VectorStore
+        NotesRepo[Notes Repository]
     end
-    
-    subgraph Data Layer
-        Cmds --> NotesRepo[Notes Repository]
-        Cmds --> VectorStore[Vector Store Service]
-        Tools --> NotesRepo
-        Tools --> VectorStore
+
+    subgraph Data
+        NotesRepo --> FileSystem[JSON Storage]
+        VectorStore --> Memory[MemoryVectorStore]
     end
-    
-    NotesRepo --> FS[File System (JSON)]
-    VectorStore --> Memory[MemoryVectorStore]
-    VectorStore --> OpenAI[OpenAI Embeddings]
 ```
 
 ## 🧩 Component Breakdown
 
-### 1. **CLI Layer (`src/cli/`)**
-- **Responsibility**: Handles user input, manages the event loop, and routes requests.
-- **Why `readline`?**: We chose the native Node.js `readline` module over heavy libraries like `inquirer` or `commander` to keep the app lightweight and maintain full control over the input stream for the custom REPL experience.
+### 1. **Frontend (`apps/web`)**
+- **Framework**: Angular 18 (Standalone Components).
+- **State Management**: Angular Signals (Native).
+- **UI Library**: Angular Material & TailwindCSS.
+- **Responsibility**: Handles user interaction, chat history display, and notes management UI.
 
-### 2. **Agent Layer (`src/agent/`)**
-- **Responsibility**: Configures the LangChain agent, system prompts, and tools.
-- **Decision: `createAgent` vs `AgentExecutor`**: We use the newer `createAgent` (drawing from LangGraph concepts) which offers better state management and extensibility compared to the legacy `AgentExecutor`.
-- **Memory**: Uses `MemorySaver` for in-memory session persistence. We chose this for simplicity in a CLI context. For a distributed app, we would switch to Redis or Postgres.
+### 2. **Backend (`apps/api`)**
+- **Framework**: Express.js.
+- **Responsibility**: Exposes REST endpoints (`/api/chat`, `/api/notes`, `/api/search`).
+- **Agent Layer**: Wraps LangChain logic. Stateless handlers invoke the agent per request (or manage session persistence).
+- **Security**: Validates input for secrets before saving.
 
-### 3. **Data Layer (`src/lib/`)**
-- **Notes Repository (`src/lib/notes/`)**: 
-  - Uses simple JSON file storage (`data/notes.json`).
-  - **Why JSON?**: Zero-dependency, human-readable, and easy to backup/version control for a personal tool.
-  
-- **Vector Store (`src/lib/vector/`)**:
-  - Implements RAG (Retrieval-Augmented Generation).
-  - **Why `MemoryVectorStore`?**: Since the dataset is small (<1000 notes), an in-memory vector store that rebuilds on startup is extremely fast and avoids the complexity of setting up extensive infrastructure like Pinecone or Weaviate.
-  - **Why OpenAI Embeddings?**: Reliable, high-quality semantic understanding (`text-embedding-3-small` is efficient and cheap).
-
-### 4. **Configuration (`src/config/`)**
-- **Responsibility**: Centralizes env vars and constants.
-- **Benefit**: Makes testing and refactoring safer by removing hardcoded strings.
+### 3. **Data Layer (`data/`)**
+- **Persistence**: `apps/api/data/notes.json` (Single source of truth).
+- **Vector Index**: In-memory `MemoryVectorStore` rebuilt on startup from the JSON file.
 
 ## 💡 Key Design Decisions
 
-### **In-Memory Vector Search vs. Persistent Vector DB**
-- **Choice**: In-Memory (rebuilt on startup).
-- **Reasoning**: Personal notes usually fit in memory. Rebuilding the index from 100 notes takes milliseconds. Adding a persistent vector DB (like Chroma or SQLite-vss) allows scale but adds significant operational complexity (installing binaries, managing connections). For a "Day 1" CLI, the in-memory approach is the pragmatic winner.
+### **Monorepo Structure**
+- **Choice**: `apps/api` + `apps/web`.
+- **Reasoning**: Clear separation of concerns while keeping the codebase unified. Allows sharing types easily in the future (though currently duplicated or separate).
 
-### **Manual Command Routing vs. LLM-only**
-- **Choice**: Hybrid. Slash commands (`/save`, `/search`) run deterministic code; other input goes to LLM.
-- **Reasoning**: 
-  - **Speed**: `/search` should be instant and raw.
-  - **Reliability**: `/save` should exactly save what I type, not what the LLM *interprets* I want to save.
-  - **Cost**: Saves tokens.
+### **Angular Signals**
+- **Choice**: Used for all UI state (Messages, Session ID, Notes List).
+- **Reasoning**: Provides fine-grained reactivity and reduces change detection overhead compared to Zone.js heavy approaches.
 
-### **Typescript & Strict Mode**
-- **Choice**: Enabled.
-- **Reasoning**: Essential for robust refactoring and preventing runtime errors in the agent logic.
+### **In-Memory Vector Search**
+- **Choice**: Keep `MemoryVectorStore`.
+- **Reasoning**: Dataset size remains small for personal use. Fast startup time (<100ms for <1000 notes) makes database complexity unnecessary.
 
 ## 🚀 Future Improvements
 
-To scale this to a production SaaS, we would:
-1.  **Database**: Migrate JSON -> PostgreSQL (with `pgvector`).
-2.  **Memory**: Migrate MemorySaver -> RedisCheckpointSaver.
-3.  **API**: Wrap the core logic in Fastify/Express endpoints.
+1.  **Shared Library**: Extract types to `libs/shared-types`.
+2.  **Database**: Migrate JSON to SQLite or Postgres for robust data safety.
+3.  **Deployment**: Dockerize the stack (Dockerfile for API, Nginx for Web).

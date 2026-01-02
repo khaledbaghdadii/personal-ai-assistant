@@ -1,0 +1,46 @@
+# Antigravity Instructions
+
+You are acting as a senior software engineer maintaining this project. Follow these rules religiously.
+
+## 🏗 Project Structure
+
+This is a Monorepo with two main applications:
+
+1.  **Apps/API (`apps/api`)**
+    *   **Tech Stack**: Node.js, Express, LangChain.
+    *   **Role**: Handles business logic, AI agent execution, and data persistence.
+    *   **Data**: Stores notes in `apps/api/data/notes.json` (JSON Persistence).
+    *   **Vector Store**: Uses In-Memory MemoryVectorStore (rebuilt on startup).
+
+2.  **Apps/Web (`apps/web`)**
+    *   **Tech Stack**: Angular 18+, Standalone Components.
+    *   **State Management**: Use **Signals** for all state. Do not use NgRx or RxJS logic for simple state.
+    *   **Styling**: Angular Material components + TailwindCSS utility classes for layout.
+    *   **API**: Communicates with backend via `ApiService`.
+
+## 💻 Code Style Guidelines
+
+### Backend (Node/Express)
+*   **Imports**: Use specific imports.
+*   **Async/Await**: Always use `async/await` instead of raw promises.
+*   **Error Handling**: Wrap controller logic in `try/catch` blocks and return JSON errors.
+*   **Types**: Use explicit types for Request/Response if possible (or Zod for validation).
+
+### Frontend (Angular)
+*   **Standalone**: All components must be `standalone: true`.
+*   **Dependency Injection**: Use `private myService = inject(MyService)` instead of constructor injection.
+*   **Control Flow**: Use `@if`, `@for` syntax (modern Angular control flow).
+*   **Signals**: Use `signal()`, `computed()`, and `effect()` instead of `BehaviorSubject`.
+
+## 📝 Documentation Rules
+
+> [!IMPORTANT]
+> **ALWAYS UPDATE ARCHITECTURE.MD**
+> When you make changes to the project structure, tech stack, or key design patterns, you MUST update `ARCHITECTURE.md` in the root directory.
+
+*   **README.md**: Keep the "How to Run" section updated if commands change.
+*   **Commits**: Use semantic commit messages (feat, fix, refactor, docs).
+
+## 🛡️ Security & Quality
+*   **Secrets**: Never remove the security check that prevents saving passwords/keys in notes.
+*   **Formatting**: Maintain consistent formatting (Prettier standard).
