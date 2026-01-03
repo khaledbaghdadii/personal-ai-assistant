@@ -1,0 +1,11 @@
+.notes-toolbar {
+    min-height: 64px !important;
+    height: 64px !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 10;
+}
+
+.dense-form-field {
+    font-size: 14px;
+}
