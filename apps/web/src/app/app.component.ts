@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MarkdownModule } from 'ngx-markdown';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +29,8 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
     MatFormFieldModule,
     MatToolbarModule,
     MatCardModule,
-    MatDialogModule
+    MatDialogModule,
+    MarkdownModule
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']

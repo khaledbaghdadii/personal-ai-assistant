@@ -10,9 +10,9 @@ export const config = {
         notesFile: path.join(process.cwd(), "data", "notes.json"),
     },
     openai: {
-        modelName: "gpt-4o-mini",
+        modelName: "gpt-5-mini",
         embeddingModel: "text-embedding-3-small",
-        temperature: 0.2,
+        temperature: 1,
     },
     vectorStore: {
         searchK: 4,

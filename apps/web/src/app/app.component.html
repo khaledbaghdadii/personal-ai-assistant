@@ -9,16 +9,16 @@
     </mat-toolbar>
 
     <div class="p-4 bg-white border-b">
-        <h3>Add Note</h3>
-        <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Title</mat-label>
-            <input matInput [(ngModel)]="noteTitleInput">
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Content</mat-label>
-            <textarea matInput [(ngModel)]="noteContentInput"></textarea>
-        </mat-form-field>
-        <button mat-raised-button color="primary" (click)="saveNote()" class="w-full">Save Note</button>
+      <h3>Add Note</h3>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Title</mat-label>
+        <input matInput [(ngModel)]="noteTitleInput">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Content</mat-label>
+        <textarea matInput [(ngModel)]="noteContentInput"></textarea>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="saveNote()" class="w-full">Save Note</button>
     </div>
 
     <mat-nav-list>
@@ -48,11 +48,11 @@
         <p>Start a conversation...</p>
       </div>
 
-      <div *ngFor="let msg of messages()" 
-           [class]="'flex ' + (msg.role === 'user' ? 'justify-end' : 'justify-start')">
-        <div [class]="'max-w-[70%] p-3 rounded-lg shadow-sm ' + 
+      <div *ngFor="let msg of messages()" [class]="'flex ' + (msg.role === 'user' ? 'justify-end' : 'justify-start')">
+        <div
+          [class]="'max-w-[70%] p-3 rounded-lg shadow-sm ' + 
                       (msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white text-gray-800 rounded-bl-none')">
-          <p class="whitespace-pre-wrap leading-relaxed">{{msg.content}}</p>
+          <markdown [data]="msg.content"></markdown>
         </div>
       </div>
     </div>
@@ -61,11 +61,11 @@
     <div class="p-4 bg-white border-t">
       <div class="flex gap-2 max-w-4xl mx-auto">
         <mat-form-field appearance="outline" class="flex-1 subscript-wrapper-none">
-            <mat-label>Message Agent...</mat-label>
-            <input matInput [(ngModel)]="chatInput" (keyup.enter)="sendMessage()">
+          <mat-label>Message Agent...</mat-label>
+          <input matInput [(ngModel)]="chatInput" (keyup.enter)="sendMessage()">
         </mat-form-field>
         <button mat-fab color="primary" (click)="sendMessage()" [disabled]="!chatInput.trim()">
-            <mat-icon>send</mat-icon>
+          <mat-icon>send</mat-icon>
         </button>
       </div>
     </div>
