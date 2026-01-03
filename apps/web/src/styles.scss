@@ -2,9 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Load Material Theme AFTER Tailwind */
+/* Load Material Theme */
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
+/* Manual Reset since Preflight is disabled */
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+/* Material overrides not needed for borders anymore if Preflight is off,
+   but keeping a clean slate ensures no regressions. */
+/* Clean slate for body */
 html,
 body {
   height: 100%;
@@ -16,25 +26,7 @@ body {
   flex: 1 1 auto;
 }
 
-/* === CRITICAL FIXES FOR MATERIAL + TAILWIND CONFLICT === */
-
-/* 1. Reset borders on internal Material form field elements */
-/* Tailwind sets border-style: solid universally, which can reveal 
-   layout divs in Material that happen to have a border-width (e.g. from user agent) 
-   or misaligned notch outlines. */
-.mat-mdc-form-field-infix,
-.mat-mdc-form-field-flex,
-.mat-mdc-text-field-wrapper {
-  border: none !important;
-}
-
-/* 2. Ensure Input elements themselves don't have borders */
-.mat-mdc-input-element {
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* 3. Fix Markdown typography */
+/* Fix Markdown typography */
 markdown {
   display: block;
   font-size: 1rem;
